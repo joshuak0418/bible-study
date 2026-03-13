@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BEE Korea 귀납적 성경연구 설교 준비 시스템</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@300;400;500;600;700&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+/* ── RESET & BASE ── */
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#0F1F3D;--navy2:#1F3864;--navy3:#2E75B6;--navy4:#D6E4F0;--navy5:#EBF3FA;
+  --gold:#C9A84C;--gold2:#F5D98B;--gold3:#FBF4E3;
+  --ink:#1A1A2E;--ink2:#3D3D5C;--ink3:#6B6B8A;--ink4:#B0B0C8;
+  --paper:#FAFAF7;--paper2:#F5F5F0;--paper3:#EEEDE8;
+  --red:#C0392B;--green:#1E6B3C;--green2:#E8F5EC;
+  --radius:8px;--radius-lg:14px;--radius-xl:20px;
+  --shadow:0 2px 12px rgba(15,31,61,.08);--shadow-lg:0 8px 32px rgba(15,31,61,.14);
+  --transition:.18s ease;
+  --font-serif:'Noto Serif KR',serif;--font-sans:'Noto Sans KR',sans-serif;
+}
+html{scroll-behavior:smooth}
+body{font-family:var(--font-sans);background:var(--paper);color:var(--ink);min-height:100vh;font-size:14px;line-height:1.6}
+
+/* ── HEADER ── */
+.site-header{background:var(--navy);color:#fff;padding:0;position:sticky;top:0;z-index:100;box-shadow:0 2px 20px rgba(0,0,0,.3)}
+.header-inner{max-width:1000px;margin:0 auto;padding:14px 24px;display:flex;align-items:center;gap:14px}
+.header-logo{width:38px;height:38px;background:var(--gold);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.header-text h1{font-family:var(--font-serif);font-size:16px;font-weight:600;letter-spacing:-.3px}
+.header-text p{font-size:11px;color:rgba(255,255,255,.55);margin-top:1px}
+.header-right{margin-left:auto;font-size:11px;color:rgba(255,255,255,.5)}
+
+/* ── LAYOUT ── */
+.main{max-width:1000px;margin:0 auto;padding:24px 20px}
+
+/* ── PROGRESS ── */
+.progress-wrap{background:#fff;border:1px solid var(--paper3);border-radius:var(--radius-xl);padding:8px;margin-bottom:24px;box-shadow:var(--shadow)}
+.progress-track{display:flex;gap:4px}
+.prog-btn{flex:1;padding:10px 6px;border-radius:var(--radius);font-size:11px;font-weight:500;color:var(--ink3);background:transparent;border:none;cursor:pointer;transition:var(--transition);text-align:center;line-height:1.4;font-family:var(--font-sans)}
+.prog-btn:hover{background:var(--paper2);color:var(--ink)}
+.prog-btn.active{background:var(--navy2);color:#fff}
+.prog-btn.done{background:var(--green2);color:var(--green)}
+.prog-num{display:block;font-size:15px;margin-bottom:2px}
+
+/* ── CARDS ── */
+.card{background:#fff;border:1px solid var(--paper3);border-radius:var(--radius-lg);padding:20px 22px;margin-bottom:16px;box-shadow:var(--shadow)}
+.card-title{font-family:var(--font-serif);font-size:15px;font-weight:600;color:var(--navy);margin-bottom:12px;display:flex;align-items:center;gap:8px;padding-bottom:10px;border-bottom:1.5px solid var(--navy5)}
+.card-title .icon{width:28px;height:28px;border-radius:50%;background:var(--navy5);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.hint{font-size:12px;color:var(--ink3);background:var(--navy5);padding:9px 12px;border-radius:var(--radius);border-left:3px solid var(--navy3);margin-bottom:14px;line-height:1.55;font-style:italic}
+
+/* ── FORM ── */
+.fg{margin-bottom:14px}
+.fg:last-child{margin-bottom:0}
+.fl{font-size:11.5px;color:var(--ink3);font-weight:500;display:block;margin-bottom:5px;letter-spacing:.2px}
+.fi{width:100%;padding:9px 12px;font-size:13px;border:1px solid var(--paper3);border-radius:var(--radius);background:#fff;color:var(--ink);font-family:var(--font-sans);transition:var(--transition)}
+.fi:focus{outline:none;border-color:var(--navy3);box-shadow:0 0 0 3px rgba(46,117,182,.1)}
+.fi::placeholder{color:var(--ink4)}
+textarea.fi{resize:vertical;line-height:1.6}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+@media(max-width:600px){.g2,.g3{grid-template-columns:1fr}}
+
+/* ── CHIPS ── */
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
+.chip{padding:5px 12px;border-radius:20px;font-size:11.5px;cursor:pointer;border:1.5px solid var(--paper3);background:var(--paper2);color:var(--ink3);transition:var(--transition);user-select:none;font-family:var(--font-sans)}
+.chip:hover{border-color:var(--navy3);color:var(--navy3)}
+.chip.on{background:var(--navy2);color:#fff;border-color:var(--navy2)}
+
+/* ── STRUCT GRID ── */
+.sg{display:grid;grid-template-columns:1fr 1fr;gap:5px}
+.si{padding:7px 10px;border:1.5px solid var(--paper3);border-radius:var(--radius);cursor:pointer;transition:var(--transition);background:#fff}
+.si:hover{border-color:var(--navy3);background:var(--navy5)}
+.si.on{background:var(--navy2);color:#fff;border-color:var(--navy2)}
+.si-name{font-size:12px;font-weight:500}
+.si-desc{font-size:10.5px;color:var(--ink4);margin-top:1px}
+.si.on .si-desc{color:rgba(255,255,255,.65)}
+
+/* ── INTERP Q ── */
+.iq-row{display:flex;gap:9px;align-items:flex-start;margin-bottom:8px}
+.iq-num{width:24px;height:24px;border-radius:50%;background:var(--green2);color:var(--green);font-size:11px;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:7px}
+
+/* ── PRINCIPLES ── */
+.pl{display:grid;grid-template-columns:1fr 1fr;gap:4px}
+.pi{display:flex;align-items:center;gap:6px;padding:6px 9px;border:1px solid var(--paper3);border-radius:var(--radius);cursor:pointer;font-size:11.5px;color:var(--ink3);transition:var(--transition);background:#fff}
+.pi:hover{background:var(--paper2)}
+.pi.on{background:var(--green2);border-color:#A5D6A7;color:var(--green)}
+.pi input{pointer-events:none;accent-color:var(--green)}
+
+/* ── TRUTH BOXES ── */
+.tb2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.tb{background:var(--paper);border:1px solid var(--paper3);border-radius:var(--radius);padding:12px}
+.tb-label{font-size:11.5px;font-weight:600;margin-bottom:7px;padding-bottom:5px;border-bottom:1px solid var(--paper3)}
+
+/* ── APP AREAS ── */
+.aa{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.aac{background:var(--paper);border-radius:var(--radius);padding:12px;border:1px solid var(--paper3)}
+.aac-t{font-size:11.5px;font-weight:600;color:var(--ink3);margin-bottom:6px}
+@media(max-width:600px){.tb2,.aa{grid-template-columns:1fr}}
+
+/* ── OUTLINE TABLE ── */
+.ot{width:100%;border-collapse:collapse;font-size:12.5px;margin:.5rem 0}
+.ot th{background:var(--navy5);padding:7px 9px;text-align:left;font-weight:600;font-size:11.5px;color:var(--navy2);border:1px solid var(--paper3)}
+.ot td{padding:6px 8px;border:1px solid var(--paper3);vertical-align:top}
+.ot input,.ot textarea{width:100%;border:none;background:transparent;font-size:12px;color:var(--ink);font-family:var(--font-sans);resize:none;outline:none;line-height:1.5}
+
+/* ── BIG IDEA ── */
+.bi{background:linear-gradient(135deg,var(--navy5) 0%,var(--gold3) 100%);border:1.5px solid var(--navy4);border-radius:var(--radius);padding:14px;margin-bottom:14px}
+.bi-l{font-size:11px;color:var(--navy3);font-weight:600;margin-bottom:4px;letter-spacing:.3px;text-transform:uppercase}
+
+/* ── BUTTONS ── */
+.brow{display:flex;gap:8px;justify-content:flex-end;margin-top:20px}
+.btn{padding:9px 20px;border-radius:var(--radius);font-size:13px;font-weight:500;cursor:pointer;border:1.5px solid var(--paper3);background:#fff;color:var(--ink);transition:var(--transition);font-family:var(--font-sans)}
+.btn:hover{background:var(--paper2);border-color:var(--ink4)}
+.btn:active{transform:scale(.98)}
+.btn-p{background:var(--navy2);color:#fff;border-color:var(--navy2)}
+.btn-p:hover{background:var(--navy3);border-color:var(--navy3)}
+.btn-g{background:var(--green);color:#fff;border-color:var(--green)}
+.btn-g:hover{background:#17532E}
+.btn-sm{padding:5px 12px;font-size:11.5px}
+.btn-danger{color:var(--red);border-color:var(--red)}
+.btn-danger:hover{background:#FEF0EE}
+
+/* ── GENERATE ── */
+.gen-section{background:#fff;border:1px solid var(--paper3);border-radius:var(--radius-lg);padding:20px;margin-bottom:16px;box-shadow:var(--shadow)}
+.loading-wrap{text-align:center;padding:20px 0}
+.spinner{display:inline-block;width:28px;height:28px;border:3px solid var(--paper3);border-top-color:var(--navy2);border-radius:50%;animation:spin .7s linear infinite;margin-bottom:10px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-text{font-size:13px;color:var(--ink3)}
+.ai-result-box{background:var(--paper);border:1px solid var(--paper3);border-radius:var(--radius);padding:14px;max-height:320px;overflow-y:auto;font-size:12.5px;line-height:1.75;white-space:pre-wrap;color:var(--ink);font-family:var(--font-sans)}
+.status-msg{padding:10px 14px;border-radius:var(--radius);font-size:12.5px;margin-bottom:14px;display:none}
+.status-msg.info{background:var(--navy5);color:var(--navy2);border:1px solid var(--navy4);display:block}
+.status-msg.ok{background:var(--green2);color:var(--green);border:1px solid #A5D6A7;display:block}
+.status-msg.err{background:#FEF0EE;color:var(--red);border:1px solid #FFCDD2;display:block}
+
+/* ── STEP HEADER ── */
+.step-header{margin-bottom:20px;padding-bottom:14px;border-bottom:2px solid var(--navy5)}
+.step-header h2{font-family:var(--font-serif);font-size:22px;font-weight:700;color:var(--navy);margin-bottom:4px}
+.step-header p{font-size:13px;color:var(--ink3)}
+.step-badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;background:var(--navy5);color:var(--navy2);margin-bottom:8px;letter-spacing:.3px}
+
+/* ── SUMMARY ROWS ── */
+.sum-row{display:flex;gap:10px;padding:7px 0;border-bottom:1px solid var(--paper3);font-size:12.5px}
+.sum-row:last-child{border:none}
+.sum-key{font-weight:600;min-width:120px;color:var(--ink3);flex-shrink:0}
+.sum-val{color:var(--ink)}
+.empty{color:var(--ink4);font-style:italic}
+
+/* ── FOOTER ── */
+.site-footer{background:var(--navy);color:rgba(255,255,255,.4);text-align:center;padding:16px;font-size:11px;margin-top:40px}
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-inner">
+    <div class="header-logo">✝</div>
+    <div class="header-text">
+      <h1>귀납적 성경연구 설교 준비 시스템</h1>
+      <p>BEE Korea 방법론 기반 — 관찰 · 해석 · 적용</p>
+    </div>
+    <div class="header-right">v1.0</div>
+  </div>
+</header>
+
+<main class="main">
+
+<div id="status-bar" class="status-msg"></div>
+
+<!-- PROGRESS -->
+<div class="progress-wrap">
+  <div class="progress-track" id="prog-track">
+    <button class="prog-btn active" onclick="nav(0)"><span class="prog-num">①</span>관찰</button>
+    <button class="prog-btn" onclick="nav(1)"><span class="prog-num">②</span>해석</button>
+    <button class="prog-btn" onclick="nav(2)"><span class="prog-num">③</span>적용</button>
+    <button class="prog-btn" onclick="nav(3)"><span class="prog-num">④</span>설교구조</button>
+    <button class="prog-btn" onclick="nav(4)"><span class="prog-num">⑤</span>생성·다운로드</button>
+  </div>
+</div>
+
+<!-- ═══════════════ STEP 0: 관찰 ═══════════════ -->
+<div id="s0">
+<div class="step-header">
+  <span class="step-badge">STEP 1 / 5</span>
+  <h2>관찰 — "나는 무엇을 보는가?"</h2>
+  <p>본문이 무엇을 말하고 있는지 정확히 파악합니다. 귀납적 연구의 출발점입니다.</p>
+</div>
+
+<div class="card">
+  <div class="card-title"><span class="icon">📋</span>본문 기본 정보</div>
+  <div class="g2">
+    <div class="fg"><label class="fl">설교 본문 *</label><input class="fi" id="v-passage" placeholder="예: 빌립보서 2:1-11"></div>
+    <div class="fg"><label class="fl">설교 일시</label><input class="fi" id="v-date" placeholder="예: 2025년 3월 16일"></div>
+  </div>
+  <div class="fg"><label class="fl">설교 제목</label><input class="fi" id="v-title" placeholder="예: 그리스도의 마음을 품으라"></div>
+  <div class="g2">
+    <div class="fg"><label class="fl">설교 시리즈</label><input class="fi" id="v-series" placeholder="예: 빌립보서 강해"></div>
+    <div class="fg"><label class="fl">예상 청중</label><input class="fi" id="v-audience" placeholder="예: 주일 오전 예배 회중"></div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-title"><span class="icon">🔍</span>1-1. 배경 관찰</div>
+  <p class="hint">저자·장소·시기·수신자·기록 목적·역사사회적 상황 정보는 본문 의미를 선명히 밝혀줍니다.</p>
+  <div class="g2">
+    <div class="fg"><label class="fl">저자</label><input class="fi" id="v-author" placeholder="예: 바울"></div>
+    <div class="fg"><label class="fl">기록 장소</label><input class="fi" id="v-place" placeholder="예: 로마 옥중"></div>
+    <div class="fg"><label class="fl">기록 시기</label><input class="fi" id="v-period" placeholder="예: 주후 61-62년경"></div>
+    <div class="fg"><label class="fl">수신자</label><input class="fi" id="v-recipient" placeholder="예: 빌립보 교회 성도들"></div>
+  </div>
+  <div class="fg"><label class="fl">역사·사회적 상황</label><textarea class="fi" id="v-hist" style="min-height:70px" placeholder="예: 바울이 로마 옥중에서 빌립보 교인들의 연합과 기쁨을 위해 쓴 서신. 빌립보는 로마 식민지로 명예와 위계 의식이 강한 도시..."></textarea></div>
+  <div class="fg"><label class="fl">기록 목적</label><textarea class="fi" id="v-bgpurpose" style="min-height:55px" placeholder="예: 빌립보 교인들의 연합과 겸손한 삶을 권면하고 그리스도의 본을 제시하기 위해"></textarea></div>
+</div>
+
+<div class="card">
+  <div class="card-title"><span class="icon">📖</span>1-2. 문체 관찰</div>
+  <div style="font-size:12px;color:var(--ink3);margin-bottom:8px">해당 문학 양식을 선택하세요:</div>
+  <div class="chips" id="genre-chips"></div>
+  <div class="fg" style="margin-top:10px"><label class="fl">수사법 / 특이 문체</label><input class="fi" id="v-rhetoric" placeholder="예: 병행법, 아바 구조(A-B-A'), 초기 교회 찬가 형태, 케노시스 언어..."></div>
+</div>
+
+<div class="card">
+  <div class="card-title"><span class="icon">🔎</span>1-3. 본문 관찰 — 육하원칙</div>
+  <p class="hint">위클리프: "누가·어디서·언제·무엇을·어떻게·왜를 관찰하라."</p>
+  <div class="fg"><label class="fl">👤 누가 — 등장인물과 관계</label><textarea class="fi" id="v-who" style="min-height:58px" placeholder="예: 바울(저자/사도), 빌립보 교인들(수신자), 예수 그리스도(본보기 및 주제)..."></textarea></div>
+  <div class="g2">
+    <div class="fg"><label class="fl">📍 어디서</label><input class="fi" id="v-where" placeholder="예: 빌립보 교회 공동체 내"></div>
+    <div class="fg"><label class="fl">🕐 언제</label><input class="fi" id="v-when" placeholder="예: 교회 내 갈등이 있는 시기"></div>
+  </div>
+  <div class="fg"><label class="fl">📌 무엇을 — 핵심 사건·명령·가르침</label><textarea class="fi" id="v-what" style="min-height:68px" placeholder="예: 그리스도의 성육신과 십자가 죽음(비움·낮아짐·순종)을 본보기로 성도들에게 겸손과 한 마음을 권면..."></textarea></div>
+  <div class="g2">
+    <div class="fg"><label class="fl">🔄 어떻게</label><textarea class="fi" id="v-how" style="min-height:58px" placeholder="예: 1-4절 권면 → 5절 전환 → 6-11절 그리스도 찬가(근거)..."></textarea></div>
+    <div class="fg"><label class="fl">❓ 왜</label><textarea class="fi" id="v-why" style="min-height:58px" placeholder="예: 교회 내 분열과 갈등 해결, 그리스도 중심의 연합을 이루도록..."></textarea></div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-title"><span class="icon">🏗</span>1-4. 구조적 특징 (14가지)</div>
+  <p class="hint">저자의 생각 전개 방식을 파악합니다. 해당하는 것을 모두 선택하세요.</p>
+  <div class="sg" id="struct-grid"></div>
+  <div class="fg" style="margin-top:12px"><label class="fl">구조 메모 / 개념 전개 흐름</label><textarea class="fi" id="v-struct-note" style="min-height:68px" placeholder="예: 1-4절(권면·요약) → 대조 → 5절(전환) → 6-11절(그리스도 찬가·예증) → 6-8절(낮아짐) → 절정 → 9-11절(높아짐·영광)..."></textarea></div>
+</div>
+
+<div class="card">
+  <div class="card-title"><span class="icon">🎯</span>1-5. 주제와 목적 도출</div>
+  <div class="g2">
+    <div class="fg"><label class="fl">주어 (본문이 다루는 주체)</label><input class="fi" id="v-subject" placeholder="예: 그리스도의 겸손과 낮아지심"></div>
+    <div class="fg"><label class="fl">서술어 (주어에 대해 무엇을 말하는가)</label><input class="fi" id="v-predicate" placeholder="예: 성도 연합과 겸손의 근거가 된다"></div>
+  </div>
+  <div class="fg"><label class="fl">본문 주제 (주어 + 서술어, 한 문장)</label><input class="fi" id="v-theme" style="border-color:var(--navy3);background:var(--navy5)" placeholder="예: 그리스도의 겸손과 낮아지심은 성도들의 연합과 겸손의 신학적 근거가 된다"></div>
+  <div class="fg"><label class="fl">저자의 기록 목적</label><textarea class="fi" id="v-purpose" style="min-height:55px" placeholder="저자는 독자들에게 ___을/를 ___하도록 이 본문을 기록했다."></textarea></div>
+</div>
+
+<div class="brow">
+  <button class="btn btn-p" onclick="nav(1)">다음: 해석 단계 →</button>
+</div>
+</div><!-- /s0 -->
+
+<!-- ═══════════════ STEP 1: 해석 ═══════════════ -->
+<div id="s1" style="display:none">
+<div class="step-header">
+  <span class="step-badge">STEP 2 / 5</span>
+  <h2>해석 — "그 의미는 무엇인가?"</h2>
+  <p>관찰한 내용의 의미를 밝힙니다. "내 생각 증명"이 아닌 "저자 의도 발견"이 목표입니다.</p>
+</div>
+
+<div class="card">
+  <div class="card-title"><span class="icon">❓</span>2-1. 해석 질문 제기</div>
+  <p class="hint">관찰에서 발견한 불분명한 핵심 단어·개념·신학적 함의에 대한 질문을 제기하세요. (최소 3개 권장)</p>
+  <div id="iq-list"></div>
+  <button class="btn btn-sm" onclick="addQ()" style="margin-top:6px">+ 질문 추가</button>
+</div>
+
+<div class="card">
+  <div class="card-title"><span class="icon">🔬</span>2-2. 4단계 해석 연구</div>
+  <div class="fg"><label class="fl">① 내용 조사 — 원어(히브리어/헬라어) 의미·문법 구조</label><textarea class="fi" id="v-r1" style="min-height:75px" placeholder="예: μορφή(모르페)=본질적 형태/본성. ἐκένωσεν(케노오)=비우다. ταπεινοφροσύνη=겸손. 6-11절은 아바(A-B-A') 구조의 초기 교회 찬가 형식..."></textarea></div>
+  <div class="fg"><label class="fl">② 문맥 재검토 — 직접 문맥 → 책 전체 → 성경 전체</label><textarea class="fi" id="v-r2" style="min-height:75px" placeholder="예: 직접 문맥: 1:27-2:4의 연합 권면의 신학적 근거. 책 전체: 기쁨·감사·연합 주제. 성경 전체: 사 53장 고난받는 종과 연결..."></textarea></div>
+  <div class="fg"><label class="fl">③ 교차 참조 — 같은 단어·개념의 다른 성경 구절</label><textarea class="fi" id="v-r3" style="min-height:75px" placeholder="예: 막 10:43-45 (섬김의 리더십), 고후 8:9 (부요하나 가난하게 되심), 요 13장 (발 씻기심), 사 53:7-8 (묵묵히 당하심)..."></textarea></div>
+  <div class="fg"><label class="fl">④ 보조 자료 — 역사·문화·지리·신학 배경</label><textarea class="fi" id="v-r4" style="min-height:75px" placeholder="예: 로마 빌립보의 계급·명예 문화. 케노시스(κένωσις) 논쟁 — 신성 완전 포기 vs. 자발적 제한. 초기 교회 찬가(Carmen Christi) 형식..."></textarea></div>
+</div>
+
+<div class="card">
+  <div class="card-title"><span class="icon">✅</span>2-3. 20가지 해석 원칙 확인</div>
+  <div class="pl" id="prin-list"></div>
+</div>
+
+<div class="card">
+  <div class="card-title"><span class="icon">📝</span>2-4. 해석 결론 및 본문 요약</div>
+  <div class="fg"><label class="fl">최종 해석 결론</label><textarea class="fi" id="v-icon" style="min-height:80px" placeholder="예: 본문의 핵심은 예수님의 성육신과 십자가(비움·낮아짐·순종)가 성도들의 겸손한 연합의 신학적 근거임을 보여준다. 여러 가능한 해석 중 가장 타당한 것은..."></textarea></div>
+  <div class="fg"><label class="fl">본문 요약 (4~6문장 단락)</label><textarea class="fi" id="v-bsummary" style="min-height:90px" placeholder="바울은 빌립보 교인들에게 그리스도의 마음을 품으라고 권면한다..."></textarea></div>
+</div>
+
+<div class="brow">
+  <button class="btn" onclick="nav(0)">← 이전</button>
+  <button class="btn btn-p" onclick="nav(2)">다음: 적용 단계 →</button>
+</div>
+</div><!-- /s1 -->
+
+<!-- ═══════════════ STEP 2: 적용 ═══════════════ -->
+<div id="s2" style="display:none">
+<div class="step-header">
+  <span class="step-badge">STEP 3 / 5</span>
+  <h2>적용 — "나는 어떻게 응답해야 하는가?"</h2>
+  <p>발견한 진리를 삶에 적용합니다. "도장(관찰·해석)이 밀랍(삶) 위에 찍혀야 완성됩니다." — BEE Korea</p>
+</div>
+
+<div class="card">
+  <div class="card-title"><span class="icon">💎</span>3-1. 본문의 진리 구별</div>
+  <div class="tb2">
+    <div class="tb">
+      <div class="tb-label" style="color:#B45309">🔶 명백한 진리 — 직접 명시된 명령·약속·경고</div>
+      <textarea class="fi" id="v-explicit" style="min-height:95px;background:transparent;border-color:var(--paper3)" placeholder="• 한 마음을 품으라 (2절)&#10;• 남을 자기보다 낫게 여기라 (3절)&#10;• 자기 일만 돌보지 말라 (4절)&#10;• 그리스도 예수의 마음을 품으라 (5절)"></textarea>
+    </div>
+    <div class="tb">
+      <div class="tb-label" style="color:var(--navy3)">🔷 함축적 진리 — 논리적으로 도출되는 원리</div>
+      <textarea class="fi" id="v-implicit" style="min-height:95px;background:transparent;border-color:var(--paper3)" placeholder="• 겸손은 의지적 선택이다&#10;• 낮아짐이 높아짐의 길이다&#10;• 공동체 연합은 그리스도 중심성에서 온다&#10;• 섬김은 지위의 포기가 아니라 사랑의 표현이다"></textarea>
+    </div>
+  </div>
+  <div class="fg">
+    <label class="fl">진리의 성격</label>
+    <div class="chips" id="truth-nature-chips"></div>
+    <textarea class="fi" id="v-truth-note" style="min-height:42px;margin-top:7px" placeholder="근거 메모:"></textarea>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-title"><span class="icon">✍️</span>3-2. 4영역 적용문 (구체적·측정가능·개인적·시간제한)</div>
+  <div class="aa">
+    <div class="aac">
+      <div class="aac-t">🙏 하나님과의 관계 (예배·기도·신뢰)</div>
+      <textarea class="fi" id="v-app-god" style="min-height:85px;background:transparent" placeholder="예: 이번 주 매일 아침 그리스도의 낮아지심을 10분 묵상 후 교만 회개 기도..."></textarea>
+    </div>
+    <div class="aac">
+      <div class="aac-t">🪞 자기 자신 (성품·습관·태도)</div>
+      <textarea class="fi" id="v-app-self" style="min-height:85px;background:transparent" placeholder="예: 이번 주 누군가 칭찬받을 때 먼저 박수 치는 습관 실천..."></textarea>
+    </div>
+    <div class="aac">
+      <div class="aac-t">👥 다른 사람들 (가정·교회·사회)</div>
+      <textarea class="fi" id="v-app-others" style="min-height:85px;background:transparent" placeholder="예: 이번 주 불편한 관계의 한 사람에게 먼저 연락하고 경청..."></textarea>
+    </div>
+    <div class="aac">
+      <div class="aac-t">🌍 세상 (사명·증거·섬김)</div>
+      <textarea class="fi" id="v-app-world" style="min-height:85px;background:transparent" placeholder="예: 이번 주 섬김이 필요한 곳에서 내 재능·시간 드리기..."></textarea>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-title"><span class="icon">🙏</span>3-3. 기도 제목</div>
+  <textarea class="fi" id="v-prayer" style="min-height:80px" placeholder="• 본문을 바르게 해석하고 전달하도록&#10;• 청중의 마음이 열리도록&#10;• 성령께서 조명하시고 역사하시도록 (고전 2:9-3:2)&#10;• 나 자신이 먼저 이 말씀에 순종하도록"></textarea>
+</div>
+
+<div class="brow">
+  <button class="btn" onclick="nav(1)">← 이전</button>
+  <button class="btn btn-p" onclick="nav(3)">다음: 설교 구조 →</button>
+</div>
+</div><!-- /s2 -->
+
+<!-- ═══════════════ STEP 3: 설교구조 ═══════════════ -->
+<div id="s3" style="display:none">
+<div class="step-header">
+  <span class="step-badge">STEP 4 / 5</span>
+  <h2>설교 구조 — Big Idea & 개요</h2>
+  <p>관찰·해석·적용의 결실을 설교 형태로 구성합니다.</p>
+</div>
+
+<div class="card">
+  <div class="card-title"><span class="icon">💡</span>4-1. Big Idea (핵심 명제)</div>
+  <div class="bi">
+    <div class="bi-l">신학적 Big Idea — 본문이 말하는 것</div>
+    <input class="fi" id="v-bi-theo" style="background:rgba(255,255,255,.8)" placeholder="예: 예수 그리스도의 자기 비움과 십자가 죽음은 성도들의 겸손한 연합의 신학적 근거다">
+  </div>
+  <div class="fg"><label class="fl">설교적 Big Idea — 청중에게 전할 것</label><input class="fi" id="v-bi-preach" placeholder="예: 그리스도의 낮아지심이 우리의 관계를 변화시킨다"></div>
+  <div class="fg"><label class="fl">설교 목적 — 청중에게 기대하는 변화</label><textarea class="fi" id="v-sermon-goal" style="min-height:55px" placeholder="이 설교를 통해 청중이 ___을/를 ___하게 되기를 바란다."></textarea></div>
+</div>
+
+<div class="card">
+  <div class="card-title"><span class="icon">📋</span>4-2. 설교 개요</div>
+  <div class="fg"><label class="fl">서론 — 주의 집중·필요 제시·주제 소개</label><textarea class="fi" id="v-intro" style="min-height:65px" placeholder="예: 현대 관계의 갈등 현실 제시 → '왜 함께하기 힘든가?' → 그리스도 안에서의 연합이 답임을 소개..."></textarea></div>
+  <table class="ot">
+    <thead>
+      <tr>
+        <th style="width:60px">대지</th>
+        <th style="width:210px">제목 / 본문</th>
+        <th>핵심 설명 · 적용</th>
+        <th style="width:130px">예화 아이디어</th>
+      </tr>
+    </thead>
+    <tbody id="outline-body"></tbody>
+  </table>
+  <button class="btn btn-sm" onclick="addPt()" style="margin-bottom:12px">+ 대지 추가</button>
+  <div class="fg"><label class="fl">결론 — Big Idea 재확인·결단 촉구</label><textarea class="fi" id="v-conclusion" style="min-height:65px" placeholder="예: 십자가를 바라볼 때 비로소 겸손이 가능 → 이번 주 한 가지 겸손한 행동으로 초청..."></textarea></div>
+</div>
+
+<div class="card">
+  <div class="card-title"><span class="icon">✅</span>4-3. 신학·목회적 점검</div>
+  <div id="theo-checks" style="display:grid;grid-template-columns:1fr 1fr;gap:5px"></div>
+</div>
+
+<div class="brow">
+  <button class="btn" onclick="nav(2)">← 이전</button>
+  <button class="btn btn-p" onclick="nav(4)">다음: 생성·다운로드 →</button>
+</div>
+</div><!-- /s3 -->
+
+<!-- ═══════════════ STEP 4: 생성 ═══════════════ -->
+<div id="s4" style="display:none">
+<div class="step-header">
+  <span class="step-badge">STEP 5 / 5</span>
+  <h2>생성 · 다운로드</h2>
+  <p>AI가 입력 내용을 정리·보완하여 완성된 설교 준비 문서를 생성합니다.</p>
+</div>
+
+<div class="card">
+  <div class="card-title"><span class="icon">📋</span>입력 내용 요약</div>
+  <div id="final-summary"></div>
+</div>
+
+<div class="card">
+  <div class="card-title"><span class="icon">📝</span>추가 지시 사항</div>
+  <textarea class="fi" id="v-extra" style="min-height:58px" placeholder="예: 청년부 설교이므로 현대적 예화 활용, 케노시스 신학 강조, 설교 시간 20분 분량 등..."></textarea>
+</div>
+
+<div class="gen-section">
+  <div class="card-title" style="border-bottom:1.5px solid var(--navy5);padding-bottom:10px;margin-bottom:14px"><span class="icon">⚡</span>AI 설교 준비 문서 생성</div>
+  <div id="gen-loading" style="display:none">
+    <div class="loading-wrap">
+      <div class="spinner"></div>
+      <p class="loading-text">Claude AI가 설교 준비 문서를 작성 중입니다...</p>
+    </div>
+  </div>
+  <div id="gen-result" style="display:none">
+    <div class="ai-result-box" id="ai-text"></div>
+    <div class="brow" style="margin-top:12px">
+      <button class="btn btn-sm" onclick="copyAI()">텍스트 복사</button>
+      <button class="btn btn-g" onclick="makeWord()">📄 Word 파일 생성 요청하기</button>
+    </div>
+  </div>
+  <button class="btn btn-p" id="gen-btn" onclick="generate()" style="width:100%;margin-top:4px;padding:12px">✨ AI로 설교 준비 문서 생성하기</button>
+</div>
+
+<div class="brow">
+  <button class="btn" onclick="nav(3)">← 이전</button>
+  <button class="btn btn-danger" onclick="resetAll()">처음부터 다시 시작</button>
+</div>
+</div><!-- /s4 -->
+
+</main>
+
+<footer class="site-footer">
+  BEE Korea 귀납적 성경연구 방법론 기반 설교 준비 시스템 | Powered by Claude AI
+</footer>
+
+<script>
+const GENRES=['산문 (역사·서신·법률)','시 (히브리 병행법)','예언 (선포·경고)','비유·우화','묵시 문학','설교·강화'];
+const STRUCTS=[['연합','유사한 것들을 함께 묶음'],['대조','반대되는 것들 대비'],['반복','같은 단어·구 반복'],['원인→결과','원인 후 결과 제시'],['결과→원인','결과 먼저·원인 설명'],['설명','개념을 자세히 풀어냄'],['예증','실례로 진리 제시'],['절정','점진적으로 고조'],['전환','논의 방향 바뀜'],['교체','두 주제 번갈아'],['준비','뒤 내용 위한 서론'],['요약','앞 내용 간추림'],['제기된 질문','본문 내 질문'],['질문에 응답','질문에 대한 답변']];
+const PRINCIPLES=['단순한 해석 우선','원래 독자 고려','단일 의미 원칙','저자 자신의 해석 우선','문맥 우선','성경의 조화','교리적 일관성','점진적 계시 고려','문화적 배경 이해','장르 고려','비유/문자 구별','원어 의미 중시','문법적 분석','역사적 배경','지리적 배경','신학적 맥락','실용적 목적','성령의 조명','겸손한 태도','적용 지향'];
+const THEO_CHECKS=['본문의 주된 의미와 설교가 일치','문맥을 벗어난 해석 없음','원어 분석이 해석을 지지','설교에 복음(그리스도 중심) 담김','과도한 알레고리 해석 없음','성경 전체 교리와 충돌 없음','적용이 본문에서 도출','청중 삶에 실제 변화 기대 가능'];
+const TRUTH_NATURE=['보편적·영구적 (모든 시대)','지역적·일시적 (특정 상황)'];
+
+let sel={genres:new Set(),structs:new Set(),principles:new Set(),theoCks:new Set(),truthNature:new Set()};
+let qCount=0,ptCount=0,aiContent='';
+
+function init(){
+  buildChips('genre-chips',GENRES,sel.genres);
+  buildStructGrid();
+  buildPrinciples();
+  buildChips('truth-nature-chips',TRUTH_NATURE,sel.truthNature);
+  buildTheoChecks();
+  addQ();addQ();addQ();
+  addPt();addPt();
+}
+function buildChips(id,arr,set){
+  const c=document.getElementById(id);
+  arr.forEach((g,i)=>{
+    const el=document.createElement('span');
+    el.className='chip';el.textContent=g;
+    el.onclick=()=>{if(set.has(i)){set.delete(i);el.classList.remove('on');}else{set.add(i);el.classList.add('on');}};
+    c.appendChild(el);
+  });
+}
+function buildStructGrid(){
+  const sg=document.getElementById('struct-grid');
+  STRUCTS.forEach(([n,d],i)=>{
+    const e=document.createElement('div');e.className='si';
+    e.onclick=()=>{if(sel.structs.has(i)){sel.structs.delete(i);e.classList.remove('on');}else{sel.structs.add(i);e.classList.add('on');}};
+    e.innerHTML=`<div class="si-name">${n}</div><div class="si-desc">${d}</div>`;
+    sg.appendChild(e);
+  });
+}
+function buildPrinciples(){
+  const pl=document.getElementById('prin-list');
+  PRINCIPLES.forEach((p,i)=>{
+    const e=document.createElement('div');e.className='pi';
+    e.onclick=()=>{
+      const chk=document.getElementById('pc'+i);
+      if(sel.principles.has(i)){sel.principles.delete(i);e.classList.remove('on');chk.checked=false;}
+      else{sel.principles.add(i);e.classList.add('on');chk.checked=true;}
+    };
+    e.innerHTML=`<input type="checkbox" id="pc${i}"> ${i+1}. ${p}`;
+    pl.appendChild(e);
+  });
+}
+function buildTheoChecks(){
+  const tc=document.getElementById('theo-checks');
+  THEO_CHECKS.forEach((t,i)=>{
+    const e=document.createElement('div');e.className='si';
+    e.onclick=()=>{if(sel.theoCks.has(i)){sel.theoCks.delete(i);e.classList.remove('on');}else{sel.theoCks.add(i);e.classList.add('on');}};
+    e.innerHTML=`<div class="si-name" style="font-size:11.5px;font-weight:400">${t}</div>`;
+    tc.appendChild(e);
+  });
+}
+function addQ(){
+  qCount++;
+  const c=document.getElementById('iq-list');
+  const d=document.createElement('div');d.className='iq-row';
+  d.innerHTML=`<div class="iq-num">Q${qCount}</div><input class="fi" id="q${qCount}" placeholder="예: '자기를 비워(ἐκένωσεν)'는 정확히 무엇을 비우신 것인가?" style="flex:1">`;
+  c.appendChild(d);
+}
+function addPt(){
+  ptCount++;
+  const tb=document.getElementById('outline-body');
+  const tr=document.createElement('tr');
+  tr.innerHTML=`<td style="text-align:center;font-weight:600;font-size:12px;color:var(--navy2)">${ptCount}대지</td><td><input class="ot" id="pt-t${ptCount}" placeholder="대지 제목 (예: 그리스도는 스스로 낮아지셨다)"></td><td><textarea class="ot" id="pt-e${ptCount}" style="min-height:55px" placeholder="핵심 설명·적용..."></textarea></td><td><input class="ot" id="pt-i${ptCount}" placeholder="예화 아이디어..."></td>`;
+  tb.appendChild(tr);
+}
+
+function nav(n){
+  for(let i=0;i<5;i++) document.getElementById('s'+i).style.display=i===n?'block':'none';
+  const btns=document.querySelectorAll('.prog-btn');
+  btns.forEach((b,i)=>{b.classList.remove('active','done');if(i<n)b.classList.add('done');if(i===n)b.classList.add('active');});
+  if(n===4) buildSummary();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function gv(id){const e=document.getElementById(id);return e?e.value.trim():'';}
+
+function buildSummary(){
+  const rows=[
+    ['설교 본문',gv('v-passage')],['설교 제목',gv('v-title')],['설교 일시',gv('v-date')],
+    ['본문 주제',gv('v-theme')],['신학적 Big Idea',gv('v-bi-theo')],
+    ['설교적 Big Idea',gv('v-bi-preach')],['설교 목적',gv('v-sermon-goal')]
+  ];
+  document.getElementById('final-summary').innerHTML=rows.map(([k,v])=>
+    `<div class="sum-row"><span class="sum-key">${k}</span><span class="sum-val ${v?'':'empty'}">${v||'(미입력)'}</span></div>`
+  ).join('');
+}
+
+function collect(){
+  const qs=[];for(let i=1;i<=qCount;i++){const v=gv('q'+i);if(v)qs.push(v);}
+  const pts=[];for(let i=1;i<=ptCount;i++){const t=gv('pt-t'+i),e=gv('pt-e'+i),il=gv('pt-i'+i);if(t||e)pts.push({t,e,il});}
+  return{
+    passage:gv('v-passage'),date:gv('v-date'),title:gv('v-title'),series:gv('v-series'),audience:gv('v-audience'),
+    author:gv('v-author'),place:gv('v-place'),period:gv('v-period'),recipient:gv('v-recipient'),
+    hist:gv('v-hist'),bgpurpose:gv('v-bgpurpose'),
+    genres:[...sel.genres].map(i=>GENRES[i]),rhetoric:gv('v-rhetoric'),
+    who:gv('v-who'),where:gv('v-where'),when:gv('v-when'),what:gv('v-what'),how:gv('v-how'),why:gv('v-why'),
+    structs:[...sel.structs].map(i=>STRUCTS[i][0]),structNote:gv('v-struct-note'),
+    subject:gv('v-subject'),predicate:gv('v-predicate'),theme:gv('v-theme'),purpose:gv('v-purpose'),
+    questions:qs,r1:gv('v-r1'),r2:gv('v-r2'),r3:gv('v-r3'),r4:gv('v-r4'),
+    principles:[...sel.principles].map(i=>PRINCIPLES[i]),
+    icon:gv('v-icon'),bsummary:gv('v-bsummary'),
+    explicit:gv('v-explicit'),implicit:gv('v-implicit'),truthNote:gv('v-truth-note'),
+    appGod:gv('v-app-god'),appSelf:gv('v-app-self'),appOthers:gv('v-app-others'),appWorld:gv('v-app-world'),
+    prayer:gv('v-prayer'),
+    biTheo:gv('v-bi-theo'),biPreach:gv('v-bi-preach'),sermonGoal:gv('v-sermon-goal'),
+    intro:gv('v-intro'),points:pts,conclusion:gv('v-conclusion'),
+    extra:gv('v-extra'),
+    theoCks:[...sel.theoCks].map(i=>THEO_CHECKS[i])
+  };
+}
+
+function buildPrompt(d){
+  const pts=d.points.map((p,i)=>`  ${i+1}대지: ${p.t||'(제목 없음)'}\n  설명: ${p.e}\n  예화: ${p.il}`).join('\n');
+  return `다음은 BEE Korea 귀납적 성경연구 방법론을 따른 설교 준비 연구 내용입니다. 완성된 설교 준비 문서를 한국어로 작성해주세요.
+
+【본문 기본 정보】
+본문: ${d.passage} | 제목: ${d.title} | 일시: ${d.date} | 시리즈: ${d.series} | 청중: ${d.audience}
+
+【관찰】
+배경 — 저자: ${d.author} | 장소: ${d.place} | 시기: ${d.period} | 수신자: ${d.recipient}
+역사·사회 상황: ${d.hist}
+기록 목적: ${d.bgpurpose}
+장르: ${d.genres.join(', ')} | 수사법: ${d.rhetoric}
+누가: ${d.who} | 어디서: ${d.where} | 언제: ${d.when}
+무엇을: ${d.what} | 어떻게: ${d.how} | 왜: ${d.why}
+구조적 특징: ${d.structs.join(', ')} | 구조 메모: ${d.structNote}
+주제: ${d.theme} | 목적: ${d.purpose}
+
+【해석】
+해석 질문: ${d.questions.map((q,i)=>`Q${i+1}: ${q}`).join(' | ')}
+원어·문법: ${d.r1}
+문맥: ${d.r2}
+교차 참조: ${d.r3}
+보조 자료: ${d.r4}
+해석 원칙: ${d.principles.join(', ')}
+결론: ${d.icon}
+요약: ${d.bsummary}
+
+【적용】
+명백한 진리: ${d.explicit}
+함축적 진리: ${d.implicit}
+하나님: ${d.appGod} | 자신: ${d.appSelf} | 타인: ${d.appOthers} | 세상: ${d.appWorld}
+기도: ${d.prayer}
+
+【설교 구조】
+신학적 Big Idea: ${d.biTheo}
+설교적 Big Idea: ${d.biPreach}
+목적: ${d.sermonGoal}
+서론: ${d.intro}
+${pts}
+결론: ${d.conclusion}
+신학 점검: ${d.theoCks.join(', ')}
+추가 지시: ${d.extra}
+
+─────────────────
+위 내용으로 완성된 설교 준비 문서를 다음 형식으로 작성하세요:
+1. 본문 개요 및 배경
+2. 관찰 핵심 정리 (구조·주제·목적)
+3. 해석 결론 및 신학적 통찰 (원어 포함)
+4. 적용 요점 (4영역)
+5. 설교 개요 (서론-대지-결론)
+6. 설교자 실천 제안 및 기도 제목`;
+}
+
+async function generate(){
+  const d=collect();
+  if(!d.passage){showStatus('설교 본문을 먼저 입력해주세요.','info');return;}
+  document.getElementById('gen-btn').style.display='none';
+  document.getElementById('gen-loading').style.display='block';
+  document.getElementById('gen-result').style.display='none';
+  try{
+    const resp=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',max_tokens:1000,
+        system:'당신은 BEE Korea 귀납적 성경연구 방법론(관찰→해석→적용) 전문가입니다. 설교자가 제공한 연구 내용을 바탕으로 완성된 설교 준비 문서를 한국어로 작성합니다.',
+        messages:[{role:'user',content:buildPrompt(d)}]
+      })
+    });
+    const json=await resp.json();
+    aiContent=json.content?.[0]?.text||'생성 오류가 발생했습니다.';
+    document.getElementById('gen-loading').style.display='none';
+    document.getElementById('ai-text').textContent=aiContent;
+    document.getElementById('gen-result').style.display='block';
+    showStatus('✅ AI 문서 초안이 생성되었습니다! Word 파일을 만들려면 아래 버튼을 누르세요.','ok');
+  }catch(e){
+    document.getElementById('gen-loading').style.display='none';
+    document.getElementById('gen-btn').style.display='block';
+    showStatus('오류가 발생했습니다: '+e.message,'err');
+  }
+}
+
+function makeWord(){
+  const d=collect();
+  alert('Word 파일 생성 기능은 Claude 채팅창에서 사용할 수 있습니다.\n\n아래 내용을 Claude에게 붙여넣으세요:\n"위 설교 준비 내용으로 Word 파일을 생성해주세요."');
+}
+
+function copyAI(){
+  navigator.clipboard.writeText(aiContent).then(()=>showStatus('클립보드에 복사되었습니다.','ok')).catch(()=>{
+    const ta=document.createElement('textarea');ta.value=aiContent;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);
+    showStatus('클립보드에 복사되었습니다.','ok');
+  });
+}
+
+function showStatus(msg,type){
+  const e=document.getElementById('status-bar');
+  e.className='status-msg '+type;e.textContent=msg;
+  if(type!=='info')setTimeout(()=>{e.style.display='none';},6000);
+}
+
+function resetAll(){
+  if(confirm('모든 입력 내용을 초기화할까요?'))location.reload();
+}
+
+init();
+</script>
+</body>
+</html>
