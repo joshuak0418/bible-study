@@ -676,5 +676,39 @@ function resetAll(){
 
 init();
 </script>
+
+  // ── FIREBASE FIRESTORE 연동 ──
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
+  import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyDGihIozbybgDwtvAmU-llLI8EgzAFDHSE",
+    authDomain: "bible-study-a1050.firebaseapp.com",
+    projectId: "bible-study-a1050",
+    storageBucket: "bible-study-a1050.firebasestorage.app",
+    messagingSenderId: "700323489207",
+    appId: "1:700323489207:web:0c00e0595933677ba47432"
+  };
+
+  const fbApp = initializeApp(firebaseConfig);
+  const db = getFirestore(fbApp);
+
+  async function saveToFirestore() {
+    const data = collect();
+    const docId = 'session_' + Date.now();
+    try {
+      await setDoc(doc(db, 'bible_sessions', docId), { ...data, savedAt: new Date().toISOString() });
+      showStatus('☁️ 클라우드에 저장되었습니다!', 'ok');
+    } catch(e) {
+      showStatus('저장 실패: ' + e.message, 'err');
+    }
+  }
+
+  const saveBtn = document.createElement('button');
+  saveBtn.textContent = '☁️ 클라우드 저장';
+  saveBtn.className = 'btn';
+  saveBtn.style.cssText = 'background:#1E6B3C;color:#fff;padding:10px 20px;border:none;border-radius:8px;cursor:pointer;font-size:14px;margin:8px;';
+  saveBtn.onclick = saveToFirestore;
+  document.querySelector('.header-right') && document.querySelector('.header-right').appendChild(saveBtn);
 </body>
 </html>
